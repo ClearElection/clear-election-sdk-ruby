@@ -1,11 +1,16 @@
 module ClearElection
   module Factory
-    def self.election(registrar: "http://dummy-registrar.example.com", booth: "http://dummy-booth.example.com")
+    def self.election(
+      registrar: "http://dummy-registrar.example.com",
+      booth: "http://dummy-booth.example.com",
+      pollsOpen: nil,
+      pollsClose: nil
+    )
       Election.new(
         registrar: Agent.new(uri: registrar),
         booth: Agent.new(uri: booth),
-        pollsOpen: DateTime.now - 1.day,
-        pollsClose: DateTime.now + 1.day,
+        pollsOpen: pollsOpen || (DateTime.now - 1.day),
+        pollsClose: pollsClose || (DateTime.now + 1.day),
         contests: [
           Contest.new(contestId: "Contest0",
                       ranked: true,
