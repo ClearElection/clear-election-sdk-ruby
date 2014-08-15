@@ -55,6 +55,11 @@ module ClearElection
       data
     end
 
+    # utilities
+    def polls_are_open?(t=nil)
+      (t || DateTime.now).between?(pollsOpen, pollsClose)
+    end
+
   end
 
   class Agent
