@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Election",
+  "description": "Election definition, v0.0",
+  "type": "object",
+  "properties": {
+    "version": { "enum": ["0.0"] },
+    "agents": {
+      "type": "object",
+      "properties": {
+        "registrar": { "$ref": "#/definitions/agent" },
+        "booth": { "$ref": "#/definitions/agent" }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "pollsOpen": { "type": "string", "format": "date-time" },
+        "pollsClose": { "type": "string", "format": "date-time" }
+      }
+    },
+    "contests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contestId": { "type": "string" },
+          "ranked": { "type": "boolean", "default": false },
+          "multiplicity": { "type": "integer", "default": 1, "minimum": 1 },
+          "writeIn": { "type": "boolean", "default": false },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "candidateId": { "type": "string" }
+              },
+              "required": ["candidateId"]
+            }
+          }
+        },
+        "required": ["contestId", "candidates"]
+      }
+    }
+  },
+  "required": ["version", "agents", "schedule", "contests"],
+  "definitions": {
+    "agent": {
+      "type": "object",
+      "properties": {
+        "uri": { "type": "string", "format": "uri" }
+      },
+      "required": ["uri"]
+    }
+  }
+}
+
