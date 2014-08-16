@@ -5,6 +5,10 @@ module ClearElection
       "#{key}-#{val}"
     end
 
+    def self.election_uri
+      "http://test.example.com/elections/#{seq(:id)}"
+    end
+
     def self.election(
       registrar: "http://dummy-registrar.example.com",
       booth: "http://dummy-booth.example.com",
