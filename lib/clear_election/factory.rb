@@ -9,15 +9,19 @@ module ClearElection
       "http://test.example.com/elections/#{seq(:id)}"
     end
 
+    def self.agent_uri(what="agent", host:"agents.example.com")
+      "http://#{host}/#{seq(what)}"
+    end
+
     def self.election(
       registrar: "http://dummy-registrar.example.com",
-      booth: "http://dummy-booth.example.com",
+      booth: nil,
       pollsOpen: nil,
       pollsClose: nil
     )
       Election.new(
-        registrar: Election::Agent.new(uri: registrar),
-        booth: Election::Agent.new(uri: booth),
+        registrar: Election::Agent.new(uri: registrar || self.agent_uri("registrar")),
+        booth: Election::Agent.new(uri: booth || self.agent_uri("booth")),
         pollsOpen: pollsOpen || (DateTime.now - 1.day),
         pollsClose: pollsClose || (DateTime.now + 1.day),
         contests: [
