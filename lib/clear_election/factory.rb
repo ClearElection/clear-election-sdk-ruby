@@ -39,7 +39,8 @@ module ClearElection
       )
     end
 
-    def self.ballot(election, identify: nil, invalid: nil)
+    def self.ballot(election=nil, identify: nil, invalid: nil)
+      election ||= self.election
       Ballot.new(
         contests: election.contests.map { |contest|
           if identify
