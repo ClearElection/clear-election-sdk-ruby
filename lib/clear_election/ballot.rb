@@ -46,6 +46,10 @@ module ClearElection
       data
     end
 
+    def <=>(other)
+      self.contests <=> other.contests
+    end
+
     class Contest
 
       attr_reader :contestId, :ballotId, :uniquifier, :choices
@@ -87,6 +91,10 @@ module ClearElection
           end
         end
         errors
+      end
+
+      def <=>(other)
+        [self.contestId, self.ballotId] <=> [other.contestId, other.ballotId]
       end
 
       def self.from_json(data)
