@@ -18,9 +18,12 @@ module ClearElection
       @errors = errors
     end
 
-    def validate(election)
+    def validate(election, complete: true)
       @contests.each do |contest|
         @errors += contest.validate(election)
+      end
+      if complete and not (missing = election.contests.map(&:contestId) - @contests.map(&:contestId)).empty?
+        @errors += missing.map { |contestId| { contestId: contestId, message: "missing contest" } }
       end
     end
 
