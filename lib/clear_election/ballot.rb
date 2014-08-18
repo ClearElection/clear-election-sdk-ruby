@@ -31,6 +31,12 @@ module ClearElection
       @errors.empty?
     end
 
+    def disassociate()
+      contests.map { |contest|
+        self.class.new(contests: [contest])
+      }
+    end
+
     def as_json()
       data = {
         "version" => "0.0",
