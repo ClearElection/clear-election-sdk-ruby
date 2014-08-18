@@ -46,6 +46,10 @@ module ClearElection
       DateTime.now.between?(pollsOpen, pollsClose)
     end
 
+    def polls_are_now_closed?
+      DateTime.now > pollsClose
+    end
+
     def get_contest(contestId)
       contests.find{|contest| contest.contestId == contestId}
     end
