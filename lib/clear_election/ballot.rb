@@ -1,19 +1,21 @@
 module ClearElection
   class Ballot
-    include ActiveModel::Validations
-
-    attr_reader :contests, :election, :errors
+    attr_reader :ballotId, :uniquifier, :contests, :errors
 
     def self.from_json(data)
       errors = JSON::Validator.fully_validate(ClearElection.schema("ballot"), data, insert_defaults: true, errors_as_objects: true)
-      if errors.blank?
-        self.new(contests: data["contests"].map { |data| Contest.from_json(data) })
-      else
-        self.new(contests: [], errors: errors)
-      end
+      return self.new(ballotId: nil, uniquifier: nil, contests: [], errors: errors) unless errors.blank?
+      
+      self.new(
+        ballotId: data["ballotId"],
+        uniquifier: data["uniquifier"],
+        contests: data["contests"].map { |data| Contest.from_json(data) }
+      )
     end
 
-    def initialize(contests:, errors: [])
+    def initialize(ballotId:, uniquifier:, contests:, errors: [])
+      @ballotId = ballotId
+      @uniquifier = uniquifier
       @contests = contests
       @errors = errors
     end
@@ -31,15 +33,11 @@ module ClearElection
       @errors.empty?
     end
 
-    def disassociate()
-      contests.map { |contest|
-        self.class.new(contests: [contest])
-      }
-    end
-
     def as_json()
       data = {
         "version" => "0.0",
+        "ballotId" => @ballotId,
+        "uniquifier" => @uniquifier,
         "contests" => @contests.map(&:as_json)
       }
       JSON::Validator.validate!(ClearElection.schema("ballot"), data)
@@ -47,17 +45,16 @@ module ClearElection
     end
 
     def <=>(other)
-      self.contests <=> other.contests
+      [self.ballotId, self.contests] <=> [other.ballotId, other.contests]
     end
+
 
     class Contest
 
-      attr_reader :contestId, :ballotId, :uniquifier, :choices
+      attr_reader :contestId, :choices
 
-      def initialize(contestId:, ballotId:, uniquifier:, choices:)
+      def initialize(contestId:, choices:)
         @contestId = contestId
-        @ballotId = ballotId
-        @uniquifier = uniquifier
         @choices = choices
       end
 
@@ -94,23 +91,19 @@ module ClearElection
       end
 
       def <=>(other)
-        [self.contestId, self.ballotId] <=> [other.contestId, other.ballotId]
+        self.contestId <=> other.contestId
       end
 
       def self.from_json(data)
         self.new(
-          ballotId: data["ballotId"],
           contestId: data["contestId"],
-          uniquifier: data["uniquifier"],
           choices: data["choices"].each_with_index.map{|data, i| Choice.from_json(data, rank: i)}
         )
       end
 
       def as_json
         {
-          "ballotId" => @ballotId,
           "contestId" => @contestId,
-          "uniquifier" => @uniquifier,
           "choices" => @choices.sort_by(&:rank).map(&:as_json)
         }
       end

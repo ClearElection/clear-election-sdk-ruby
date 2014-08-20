@@ -5,14 +5,14 @@
   "type": "object",
   "properties": {
     "version": { "enum": ["0.0"] },
+    "ballotId": { "type": "string" },
+    "uniquifier": { "type": "string" },
     "contests": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "ballotId": { "type": "string" },
           "contestId": { "type": "string" },
-          "uniquifier": { "type": "string" },
           "choices": {
             "type": "array",
             "items": {
@@ -24,9 +24,9 @@
             }
           }
         },
-        "required": ["ballotId", "contestId", "uniquifier", "choices"]
+        "required": ["contestId", "choices"]
       }
     }
   },
-  "required": ["version", "contests"]
+  "required": ["version", "ballotId", "uniquifier", "contests"]
 }

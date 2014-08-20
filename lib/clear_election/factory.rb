@@ -43,16 +43,12 @@ module ClearElection
       )
     end
 
-    def self.ballot(election=nil, identify: nil, invalid: nil)
+    def self.ballot(election=nil, ballotId: nil, uniquifier: nil, invalid: nil)
       election ||= self.election
       Ballot.new(
+        ballotId: ballotId || seq(:ballotId),
+        uniquifier: uniquifier || seq(:uniquifier),
         contests: election.contests.map { |contest|
-          if identify
-            ballotId, uniquifier = identify.call(contest)
-          else
-            ballotId = seq(:ballotId)
-            uniquifier = seq(:uniquifier)
-          end
           options = contest.candidates.map(&:candidateId)
           options << "ABSTAIN"
           options << "WRITEIN: TestWritein" if contest.writeIn
@@ -60,8 +56,6 @@ module ClearElection
           options.push "Test-Invalid-CandidateId" if invalid == :candidateId
           Ballot::Contest.new(
             contestId: contest.contestId,
-            ballotId: ballotId,
-            uniquifier: uniquifier,
             choices: contest.multiplicity.times.map {|rank|
               Ballot::Choice.new(candidateId: options.pop, rank: rank)
             }
