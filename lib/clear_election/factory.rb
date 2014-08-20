@@ -14,13 +14,13 @@ module ClearElection
     end
 
     def self.election(
-      registrar: "http://dummy-registrar.example.com",
+      signin: "http://dummy-signin.example.com",
       booth: nil,
       pollsOpen: nil,
       pollsClose: nil
     )
       Election.new(
-        registrar: Election::Agent.new(uri: registrar || self.agent_uri("registrar")),
+        signin: Election::Agent.new(uri: signin || self.agent_uri("signin")),
         booth: Election::Agent.new(uri: booth || self.agent_uri("booth")),
         pollsOpen: pollsOpen || (DateTime.now - 1.day),
         pollsClose: pollsClose || (DateTime.now + 1.day),

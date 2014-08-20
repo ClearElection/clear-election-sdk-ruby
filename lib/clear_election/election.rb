@@ -1,10 +1,10 @@
 module ClearElection
 
   class Election
-    attr_reader :registrar, :booth, :pollsOpen, :pollsClose, :contests, :uri
+    attr_reader :signin, :booth, :pollsOpen, :pollsClose, :contests, :uri
 
-    def initialize(registrar:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil)
-      @registrar = registrar
+    def initialize(signin:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil)
+      @signin = signin
       @booth = booth
       @contests = contests
       @pollsOpen = pollsOpen
@@ -15,7 +15,7 @@ module ClearElection
     def self.from_json(data, uri: nil)
       JSON::Validator.validate!(ClearElection.schema, data, insert_defaults: true)
       self.new(
-        registrar: Agent.from_json(data["agents"]["registrar"]),
+        signin: Agent.from_json(data["agents"]["signin"]),
         booth: Agent.from_json(data["agents"]["booth"]),
         contests: data["contests"].map {|data| Contest.from_json(data) },
         pollsOpen: DateTime.rfc3339(data["schedule"]["pollsOpen"]),
@@ -28,7 +28,7 @@ module ClearElection
       data = {
         "version" => "0.0",
         "agents" => {
-          "registrar" => @registrar.as_json,
+          "signin" => @signin.as_json,
           "booth" => @booth.as_json
         },
         "schedule" => {

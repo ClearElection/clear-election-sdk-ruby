@@ -8,7 +8,7 @@
     "agents": {
       "type": "object",
       "properties": {
-        "registrar": { "$ref": "#/definitions/agent" },
+        "signin": { "$ref": "#/definitions/agent" },
         "booth": { "$ref": "#/definitions/agent" }
       }
     },
