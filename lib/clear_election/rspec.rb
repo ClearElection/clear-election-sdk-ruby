@@ -14,9 +14,15 @@ module ClearElection
       
     module Helpers
       # creates a webmock stub request for an election_uri to return an election
-      def stub_election_uri(election: nil, election_uri: nil, booth: nil, signin: nil)
+      def stub_election_uri(election: nil, election_uri: nil, booth: nil, signin: nil, pollsOpen: nil, pollsClose: nil, valid: true)
         election_uri ||= ClearElection::Factory.election_uri
-        stub_request(:get, election_uri).to_return body: (election || ClearElection::Factory.election(booth: booth, signin: signin)).as_json
+        if valid
+          election ||= ClearElection::Factory.election(booth: booth, signin: signin, pollsOpen: pollsOpen, pollsClose: pollsClose)
+          result = { body: election.as_json }
+        else
+          result = { status: 404 }
+        end
+        stub_request(:get, election_uri).to_return result
         election_uri
       end
 
