@@ -22,8 +22,8 @@ module ClearElection
       Election.new(
         signin: Election::Agent.new(uri: signin || self.agent_uri("signin")),
         booth: Election::Agent.new(uri: booth || self.agent_uri("booth")),
-        pollsOpen: pollsOpen || (DateTime.now - 1.day),
-        pollsClose: pollsClose || (DateTime.now + 1.day),
+        pollsOpen: (pollsOpen || 1.month.ago).to_datetime(),
+        pollsClose: (pollsClose || 1.month.from_now).to_datetime(),
         contests: [
           Election::Contest.new(contestId: seq(:contestId),
                       ranked: true,
