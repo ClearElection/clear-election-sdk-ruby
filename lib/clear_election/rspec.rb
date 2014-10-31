@@ -26,6 +26,19 @@ module ClearElection
         election_uri
       end
 
+      # creates a webmock stub for signin with an access token
+      def stub_election_access_token(election_uri:, election: nil, accessToken: nil, valid: true)
+        accessToken ||= SecureRandom.hex(10)
+        if valid
+          result = { status: 200 }
+        else
+          result = { status: 403 }
+        end
+        election ||= ClearElection.read(election_uri)
+        stub_request(:post, election.signin.uri + "redeem").with(body: {election_uri: election_uri, accessToken: accessToken}).to_return result
+        accessToken
+      end
+
       # For use in an agent: create a URI that will act in rspec as if
       # it's URI at which the app was called
       def setup_my_agent_uri
