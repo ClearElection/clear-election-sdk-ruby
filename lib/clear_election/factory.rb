@@ -43,7 +43,7 @@ module ClearElection
       )
     end
 
-    def self.ballot(election=nil, ballotId: nil, uniquifier: nil, invalid: nil)
+    def self.ballot(election=nil, ballotId: nil, uniquifier: nil, demographic: nil, invalid: nil)
       election ||= self.election
       Ballot.new(
         ballotId: ballotId || seq(:ballotId),
@@ -60,7 +60,8 @@ module ClearElection
               Ballot::Choice.new(candidateId: options.pop, rank: rank)
             }
           )
-        }
+        },
+        demographic: demographic
       )
     end
   end

@@ -27,10 +27,10 @@ module ClearElection
       end
 
       # creates a webmock stub for signin with an access token
-      def stub_election_access_token(election_uri:, election: nil, accessToken: nil, valid: true)
+      def stub_election_access_token(election_uri:, election: nil, accessToken: nil, demographic: nil, valid: true)
         accessToken ||= SecureRandom.hex(10)
         if valid
-          result = { status: 200 }
+          result = { status: 200, body: { demographic: demographic } }
         else
           result = { status: 403 }
         end

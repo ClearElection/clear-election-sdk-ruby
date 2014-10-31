@@ -26,7 +26,8 @@
         },
         "required": ["contestId", "choices"]
       }
-    }
+    },
+    "demographic": { "type": "object" }
   },
   "required": ["version", "ballotId", "uniquifier", "contests"]
 }

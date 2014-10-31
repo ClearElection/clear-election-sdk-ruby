@@ -1,6 +1,6 @@
 module ClearElection
   class Ballot
-    attr_reader :ballotId, :uniquifier, :contests, :errors
+    attr_reader :ballotId, :uniquifier, :contests, :errors, :demographic
 
     def self.from_json(data)
       errors = JSON::Validator.fully_validate(ClearElection.schema("ballot"), data, insert_defaults: true, errors_as_objects: true)
@@ -9,14 +9,16 @@ module ClearElection
       self.new(
         ballotId: data["ballotId"],
         uniquifier: data["uniquifier"],
-        contests: data["contests"].map { |data| Contest.from_json(data) }
+        contests: data["contests"].map { |data| Contest.from_json(data) },
+        demographic: data["demographic"]
       )
     end
 
-    def initialize(ballotId:, uniquifier:, contests:, errors: [])
+    def initialize(ballotId:, uniquifier:, contests:, errors: [], demographic: nil)
       @ballotId = ballotId
       @uniquifier = uniquifier
       @contests = contests
+      @demographic = demographic
       @errors = errors
     end
 
@@ -38,8 +40,9 @@ module ClearElection
         "version" => "0.0",
         "ballotId" => @ballotId,
         "uniquifier" => @uniquifier,
-        "contests" => @contests.map(&:as_json)
+        "contests" => @contests.map(&:as_json),
       }
+      data["demographic"] = @demographic if @demographic
       JSON::Validator.validate!(ClearElection.schema("ballot"), data)
       data
     end
