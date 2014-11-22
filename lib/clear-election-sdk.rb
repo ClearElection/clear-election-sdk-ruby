@@ -1,8 +1,8 @@
 require "faraday"
 
-require "clear_election/election"
-require "clear_election/ballot"
-require "clear_election/version"
+require "clear-election-sdk/election"
+require "clear-election-sdk/ballot"
+require "clear-election-sdk/version"
 
 module ClearElection
 
