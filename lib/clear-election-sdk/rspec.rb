@@ -35,7 +35,7 @@ module ClearElection
           result = { status: 403 }
         end
         election ||= ClearElection.read(election_uri)
-        stub_request(:post, election.signin.uri + "redeem").with(body: {election_uri: election_uri, accessToken: accessToken}).to_return result
+        stub_request(:post, election.signin.uri + "redeem").with(body: {election: election_uri, accessToken: accessToken}).to_return result
         accessToken
       end
 
