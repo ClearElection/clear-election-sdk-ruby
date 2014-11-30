@@ -52,55 +52,39 @@ module ClearElection
         @my_agent_uri ||= ClearElection::Factory.agent_uri(Rails.root.basename)
       end
 
-      shared_examples "api validates election URI" do |state: :open, agent: None|
-
-        describe "validates election #{state}" do
-          it "checks election URI validity" do
-            apicall.call stub_election_uri(valid: false)
-            expect(response).to have_http_status 422
-            expect(response_json["error"]).to match /uri/i
-          end
-
-          it "checks I am #{agent} agent" do
-            apicall.call stub_election_uri()
-            expect(response).to have_http_status 422
-            expect(response_json["error"]).to match /#{agent} agent/i
-          end if agent
-
-          let(:election_uri) { stub_election_uri(agent ? { agent => my_agent_uri } : {}) }
-
-          let(:election) { ClearElection.read(election_uri) }
+      shared_examples "api that verifies election state" do |state|
+        describe "verifies election is #{state}" do
 
           case state
           when :open
-            it "verifies polls have opened" do
+            it "rejects if polls have not opened" do
               Timecop.travel(election.pollsOpen - 1.day) do
-                apicall.call election_uri
+                api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /open/i
               end
             end
-            it "verifies polls have not closed" do
+            it "rejects if polls have closed" do
               Timecop.travel(election.pollsClose + 1.day) do
-                apicall.call election_uri
+                api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /open/i
               end
             end
 
           when :closed
-            it "verifies polls have closed" do
+            it "rejects if polls have not closed" do
               Timecop.travel(election.pollsClose - 1.day) do
-                apicall.call election_uri
+                api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /closed/i
               end
             end
 
           when :unopen
-            it "verifies polls have not yet opened" do
+            it "rejects if polls have opened" do
               Timecop.travel(election.pollsOpen + 1.day) do
-                apicall.call election_uri
+                api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /open/i
               end
@@ -109,8 +93,32 @@ module ClearElection
           else
             raise "Unknown election verification state #{state.inspect}"
           end
-
         end
+      end
+
+      shared_examples "api that validates election URI" do |state: :open, agent: None|
+
+        describe "verifies election URI" do
+          it "rejects invalid election URI" do
+            apicall.call stub_election_uri(valid: false)
+            expect(response).to have_http_status 422
+            expect(response_json["error"]).to match /uri/i
+          end
+
+          it "rejects if I am not #{agent} agent" do
+            apicall.call stub_election_uri() # not passing my_agent_uri
+            expect(response).to have_http_status 422
+            expect(response_json["error"]).to match /#{agent} agent/i
+          end if agent
+        end
+
+        let(:election_uri) { stub_election_uri(agent ? { agent => my_agent_uri } : {}) }
+
+        it_behaves_like "api that verifies election state", state do
+          let(:election) { ClearElection.read(election_uri) }
+          let(:api_bound) { -> { apicall.call election_uri } }
+        end
+
       end
     end
   end
