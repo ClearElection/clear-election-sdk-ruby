@@ -51,6 +51,67 @@ module ClearElection
       def my_agent_uri
         @my_agent_uri ||= ClearElection::Factory.agent_uri(Rails.root.basename)
       end
+
+      shared_examples "api validates election URI" do |state: :open, agent: None|
+
+        describe "validates election #{state}" do
+          it "checks election URI validity" do
+            apicall.call stub_election_uri(valid: false)
+            expect(response).to have_http_status 422
+            expect(response_json["error"]).to match /uri/i
+          end
+
+          it "checks I am #{agent} agent" do
+            apicall.call stub_election_uri()
+            expect(response).to have_http_status 422
+            expect(response_json["error"]).to match /#{agent} agent/i
+          end if agent
+
+          let(:election_uri) { stub_election_uri(agent ? { agent => my_agent_uri } : {}) }
+
+          let(:election) { ClearElection.read(election_uri) }
+
+          case state
+          when :open
+            it "verifies polls have opened" do
+              Timecop.travel(election.pollsOpen - 1.day) do
+                apicall.call election_uri
+                expect(response).to have_http_status 403
+                expect(response_json["error"]).to match /open/i
+              end
+            end
+            it "verifies polls have not closed" do
+              Timecop.travel(election.pollsClose + 1.day) do
+                apicall.call election_uri
+                expect(response).to have_http_status 403
+                expect(response_json["error"]).to match /open/i
+              end
+            end
+
+          when :closed
+            it "verifies polls have closed" do
+              Timecop.travel(election.pollsClose - 1.day) do
+                apicall.call election_uri
+                expect(response).to have_http_status 403
+                expect(response_json["error"]).to match /closed/i
+              end
+            end
+
+          when :unopen
+            it "verifies polls have not yet opened" do
+              Timecop.travel(election.pollsOpen + 1.day) do
+                apicall.call election_uri
+                expect(response).to have_http_status 403
+                expect(response_json["error"]).to match /open/i
+              end
+            end
+
+          else
+            raise "Unknown election verification state #{state.inspect}"
+          end
+
+        end
+      end
     end
   end
 end
