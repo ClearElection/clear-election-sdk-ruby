@@ -1,4 +1,5 @@
 require "faraday"
+require "json-schema"
 
 require "clear-election-sdk/election"
 require "clear-election-sdk/ballot"
