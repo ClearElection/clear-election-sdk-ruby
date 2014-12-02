@@ -14,7 +14,7 @@ module ClearElection
   def self.read(uri)
     response = Faraday.get(uri)
     return nil unless response.success?
-    Election.from_json(response.body, uri: uri)
+    Election.from_json(JSON.parse(response.body), uri: uri)
   end
 
 end

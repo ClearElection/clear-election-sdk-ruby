@@ -18,7 +18,7 @@ module ClearElection
         election_uri ||= ClearElection::Factory.election_uri
         if valid
           election ||= ClearElection::Factory.election(booth: booth, signin: signin, pollsOpen: pollsOpen, pollsClose: pollsClose)
-          result = { body: election.as_json }
+          result = { body: JSON.generate(election.as_json) }
         else
           result = { status: 404 }
         end
@@ -30,7 +30,7 @@ module ClearElection
       def stub_election_access_token(election_uri:, election: nil, accessToken: nil, demographic: nil, valid: true)
         accessToken ||= SecureRandom.hex(10)
         if valid
-          result = { status: 200, body: { demographic: demographic } }
+          result = { status: 200, body: JSON.generate(demographic: demographic) }
         else
           result = { status: 403 }
         end
