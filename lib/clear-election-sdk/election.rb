@@ -1,7 +1,14 @@
 module ClearElection
 
   class Election
+
+    SCHEMA_VERSION = 0.0
+
     attr_reader :signin, :booth, :pollsOpen, :pollsClose, :contests, :uri
+
+    def self.schema
+      ClearElection::Schema.election(version: SCHEMA_VERSION)
+    end
 
     def initialize(signin:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil)
       @signin = signin
@@ -13,7 +20,7 @@ module ClearElection
     end
 
     def self.from_json(data, uri: nil)
-      JSON::Validator.validate!(ClearElection.schema, data, insert_defaults: true)
+      JSON::Validator.validate!(schema, data, insert_defaults: true)
       self.new(
         signin: Agent.from_json(data["agents"]["signin"]),
         booth: Agent.from_json(data["agents"]["booth"]),
@@ -37,7 +44,7 @@ module ClearElection
         },
         "contests" => @contests.map(&:as_json)
       }
-      JSON::Validator.validate!(ClearElection.schema, data)
+      JSON::Validator.validate!(Election.schema, data)
       data
     end
 
@@ -95,7 +102,7 @@ module ClearElection
         )
       end
 
-      def self.as_json
+      def as_json
         {
           "contestId" => @contestId,
           "ranked" => @ranked,

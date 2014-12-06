@@ -1,9 +1,17 @@
 module ClearElection
+
   class Ballot
+
+    SCHEMA_VERSION = 0.0
+
     attr_reader :ballotId, :uniquifier, :contests, :errors, :demographic
 
+    def self.schema
+      ClearElection::Schema.ballot(version: SCHEMA_VERSION)
+    end
+
     def self.from_json(data)
-      errors = JSON::Validator.fully_validate(ClearElection.schema("ballot"), data, insert_defaults: true, errors_as_objects: true)
+      errors = JSON::Validator.fully_validate(schema, data, insert_defaults: true, errors_as_objects: true)
       return self.new(ballotId: nil, uniquifier: nil, contests: [], errors: errors) unless errors.blank?
       
       self.new(
@@ -43,7 +51,7 @@ module ClearElection
         "contests" => @contests.map(&:as_json),
       }
       data["demographic"] = @demographic if @demographic
-      JSON::Validator.validate!(ClearElection.schema("ballot"), data)
+      JSON::Validator.validate!(Ballot.schema, data)
       data
     end
 
