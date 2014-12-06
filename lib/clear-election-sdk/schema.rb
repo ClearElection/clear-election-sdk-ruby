@@ -6,8 +6,10 @@ module ClearElection
       @root ||= Pathname.new(__FILE__).dirname.parent.parent + "schemas"
     end
 
-    def _get(group:nil, item:, version:)
-      JSON.parse(File.read(root + (group||"") + "#{item}-#{version}.schema.json"))
+    def _get(group:nil, item:, version:, expand: false)
+      JSON.parse(File.read(root + (group||"") + "#{item}-#{version}.schema.json")).tap { |json|
+        expand_refs!(json) if expand
+      }
     end
 
     def election(version: ELECTION_SCHEMA_VERSION)
@@ -19,7 +21,26 @@ module ClearElection
     end
 
     def api(agent, version:)
-      _get(group: "api", item: agent, version:version)
+      _get(group: "api", item: agent, version:version, expand: true)
+    end
+
+    def expand_refs!(json)
+      json.tap {
+        JSON.recurse_proc json do |item|
+          if Hash === item and uri = item['$ref']
+            uri = URI.parse(uri)
+            source = case uri.scheme
+                     when nil then nil
+                     when 'file' then ClearElection::Schema.root.join uri.path.sub(%r{^/}, '')
+                     else uri
+                     end
+            if source
+              item.delete '$ref'
+              item.merge! expand_refs! JSON.parse source.read
+            end
+          end
+        end
+      }
     end
   end
 end
