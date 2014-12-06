@@ -15,7 +15,7 @@ module ClearElection
     end
 
     def ballot(version: BALLOT_SCHEMA_VERSION)
-      _get(item: "election", version: version)
+      _get(item: "ballot", version: version)
     end
 
     def api(agent, version:)
