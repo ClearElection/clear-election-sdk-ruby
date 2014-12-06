@@ -1,3 +1,5 @@
+require "webmock/rspec"
+
 module ClearElection
   module Rspec
 

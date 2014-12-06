@@ -10,20 +10,21 @@ module ClearElection
     end
 
     def self.agent_uri(what="agent", host:"agents.example.com")
-      "http://#{host}/#{seq(what)}"
+      "http://#{host}/#{seq(what)}/"
     end
 
     def self.election(
-      signin: "http://dummy-signin.example.com",
+      signin: nil,
       booth: nil,
       pollsOpen: nil,
       pollsClose: nil
     )
+      one_month = 60*60*24*30
       Election.new(
         signin: Election::Agent.new(uri: signin || self.agent_uri("signin")),
         booth: Election::Agent.new(uri: booth || self.agent_uri("booth")),
-        pollsOpen: (pollsOpen || 1.month.ago).to_datetime(),
-        pollsClose: (pollsClose || 1.month.from_now).to_datetime(),
+        pollsOpen: (pollsOpen || Time.now - one_month).to_datetime(),
+        pollsClose: (pollsClose || Time.now + one_month).to_datetime(),
         contests: [
           Election::Contest.new(contestId: seq(:contestId),
                       ranked: true,
