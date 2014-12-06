@@ -1,6 +1,6 @@
 {
   "definitions": {
-    "ballot": { "$ref": "file:/../clear-election-sdk/schema/ballot.schema-0.0.json" },
+    "ballot": { "$ref": "file:/ballot-0.0.schema.json" },
     "session-request": {
       "type": "object",
       "properties": {

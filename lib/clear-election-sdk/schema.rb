@@ -2,9 +2,12 @@ module ClearElection
   module Schema
     extend self
 
-    def _get(group:nil, item:, version:)
+    def root
       @root ||= Pathname.new(__FILE__).dirname.parent.parent + "schemas"
-      JSON.parse(File.read(@root + (group||"") + "#{item}-#{version}.schema.json"))
+    end
+
+    def _get(group:nil, item:, version:)
+      JSON.parse(File.read(root + (group||"") + "#{item}-#{version}.schema.json"))
     end
 
     def election(version: ELECTION_SCHEMA_VERSION)
