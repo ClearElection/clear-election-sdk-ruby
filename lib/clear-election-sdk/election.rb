@@ -10,7 +10,8 @@ module ClearElection
       ClearElection::Schema.election(version: SCHEMA_VERSION)
     end
 
-    def initialize(signin:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil)
+    def initialize(name:, signin:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil)
+      @name = name
       @signin = signin
       @booth = booth
       @contests = contests
@@ -22,6 +23,7 @@ module ClearElection
     def self.from_json(data, uri: nil)
       JSON::Validator.validate!(schema, data, insert_defaults: true)
       self.new(
+        name: data["name"],
         signin: Agent.from_json(data["agents"]["signin"]),
         booth: Agent.from_json(data["agents"]["booth"]),
         contests: data["contests"].map {|data| Contest.from_json(data) },
@@ -34,6 +36,7 @@ module ClearElection
     def as_json()
       data = {
         "version" => "0.0",
+        "name" => @name,
         "agents" => {
           "signin" => @signin.as_json,
           "booth" => @booth.as_json
@@ -84,8 +87,9 @@ module ClearElection
     class Contest
       attr_reader :contestId, :ranked, :multiplicity, :writeIn, :candidates
 
-      def initialize(contestId:, ranked: nil, multiplicity: nil, writeIn: nil, candidates:)
+      def initialize(contestId:, name:, ranked: nil, multiplicity: nil, writeIn: nil, candidates:)
         @contestId = contestId
+        @name = name
         @ranked = ranked || false
         @multiplicity = multiplicity || 1
         @writeIn = writeIn || false
@@ -95,6 +99,7 @@ module ClearElection
       def self.from_json(data)
         self.new(
           contestId: data["contestId"],
+          name: data["name"],
           ranked: data["ranked"],
           multiplicity: data["multiplicity"],
           writeIn: data["writeIn"],
@@ -105,6 +110,7 @@ module ClearElection
       def as_json
         {
           "contestId" => @contestId,
+          "name" => @name,
           "ranked" => @ranked,
           "multiplicity" => @multiplicity,
           "writeIn" => @writeIn,
@@ -117,19 +123,22 @@ module ClearElection
     class Candidate
       attr_reader :candidateId
 
-      def initialize(candidateId:)
+      def initialize(candidateId:, name:)
         @candidateId = candidateId
+        @name = name
       end
 
       def self.from_json(data)
         self.new(
-          candidateId: data["candidateId"]
+          candidateId: data["candidateId"],
+          name: data["name"]
         )
       end
 
       def as_json
         {
-          "candidateId" => @candidateId
+          "candidateId" => @candidateId,
+          "name" => @name
         }
       end
     end

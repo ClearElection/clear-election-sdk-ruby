@@ -5,6 +5,7 @@
   "type": "object",
   "properties": {
     "version": { "enum": ["0.0"] },
+    "name": { "type": "string" },
     "agents": {
       "type": "object",
       "properties": {
@@ -25,6 +26,7 @@
         "type": "object",
         "properties": {
           "contestId": { "type": "string" },
+          "name": { "type": "string" },
           "ranked": { "type": "boolean", "default": false },
           "multiplicity": { "type": "integer", "default": 1, "minimum": 1 },
           "writeIn": { "type": "boolean", "default": false },
@@ -33,17 +35,18 @@
             "items": {
               "type": "object",
               "properties": {
-                "candidateId": { "type": "string" }
+                "candidateId": { "type": "string" },
+                "name": { "type": "string" }
               },
-              "required": ["candidateId"]
+              "required": ["candidateId", "name"]
             }
           }
         },
-        "required": ["contestId", "candidates"]
+        "required": ["contestId", "name", "candidates"]
       }
     }
   },
-  "required": ["version", "agents", "schedule", "contests"],
+  "required": ["version", "name", "agents", "schedule", "contests"],
   "definitions": {
     "agent": {
       "type": "object",

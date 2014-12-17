@@ -21,25 +21,25 @@ module ClearElection
     )
       one_month = 60*60*24*30
       Election.new(
+        name: seq("Election Name"),
         signin: Election::Agent.new(uri: signin || self.agent_uri("signin")),
         booth: Election::Agent.new(uri: booth || self.agent_uri("booth")),
         pollsOpen: (pollsOpen || Time.now - one_month).to_datetime(),
         pollsClose: (pollsClose || Time.now + one_month).to_datetime(),
         contests: [
-          Election::Contest.new(contestId: seq(:contestId),
-                      ranked: true,
-                      multiplicity: 3,
-                      writeIn: true,
-                      candidates: [
-                        Election::Candidate.new(candidateId: seq(:candidateId)),
-                        Election::Candidate.new(candidateId: seq(:candidateId)),
-                        Election::Candidate.new(candidateId: seq(:candidateId)),
-                      ]),
-          Election::Contest.new(contestId: seq(:contestId),
-                      candidates: [
-                        Election::Candidate.new(candidateId: seq(:candidateId)),
-                        Election::Candidate.new(candidateId: seq(:candidateId)),
-                      ]),
+          Election::Contest.new(
+            contestId: seq(:contestId),
+            name: seq("Contest Name"),
+            ranked: true,
+            multiplicity: 3,
+            writeIn: true,
+            candidates: 3.times.map{ Election::Candidate.new(candidateId: seq(:candidateId), name: seq("Candidate Name")) }
+          ),
+          Election::Contest.new(
+            contestId: seq(:contestId),
+            name: seq("Contest Name"),
+            candidates: 2.times.map{ Election::Candidate.new(candidateId: seq(:candidateId), name: seq("Candidate Name")) }
+          ),
         ]
       )
     end
