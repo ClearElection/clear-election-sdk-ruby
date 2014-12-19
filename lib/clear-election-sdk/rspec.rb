@@ -59,17 +59,19 @@ module ClearElection
       shared_examples "api that verifies election state" do |state|
         describe "verifies election is #{state}" do
 
+          oneDay = 60*60*24
+
           case state
           when :open
             it "rejects if polls have not opened" do
-              Timecop.travel(election.pollsOpen - 1.day) do
+              Timecop.travel(election.pollsOpen - oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /open/i
               end
             end
             it "rejects if polls have closed" do
-              Timecop.travel(election.pollsClose + 1.day) do
+              Timecop.travel(election.pollsClose + oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /open/i
@@ -78,7 +80,7 @@ module ClearElection
 
           when :closed
             it "rejects if polls have not closed" do
-              Timecop.travel(election.pollsClose - 1.day) do
+              Timecop.travel(election.pollsClose - oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /closed/i
@@ -87,7 +89,7 @@ module ClearElection
 
           when :unopen
             it "rejects if polls have opened" do
-              Timecop.travel(election.pollsOpen + 1.day) do
+              Timecop.travel(election.pollsOpen + oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
                 expect(response_json["error"]).to match /open/i
