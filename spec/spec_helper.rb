@@ -6,7 +6,6 @@ require 'timecop'
 
 require 'clear-election-sdk'
 require 'clear-election-sdk/rspec'
-require 'clear-election-sdk/factory'
 
 RSpec.configure do |config|
   

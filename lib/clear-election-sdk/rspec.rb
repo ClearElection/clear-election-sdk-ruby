@@ -1,5 +1,7 @@
 require "webmock/rspec"
 
+require_relative "factory"
+
 module ClearElection
   module Rspec
 
