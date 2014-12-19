@@ -97,7 +97,9 @@ module ClearElection
             end
 
           else
+            # :nocov:
             raise "Unknown election verification state #{state.inspect}"
+            # :nocov:
           end
         end
       end
