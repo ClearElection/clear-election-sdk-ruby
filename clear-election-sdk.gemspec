@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = ClearElection::VERSION
   spec.authors       = ["ronen barzel"]
   spec.email         = ["ronen@barzel.org"]
-  spec.summary       = %q{Ruby SDK for working with ClearElection descriptions}
-  spec.description   = %q{Ruby SDK for working with ClearElection descriptions.  Also includes factory for testing}
-  spec.homepage      = ""
+  spec.summary       = %q{Ruby SDK for working with ClearElection data}
+  spec.description   = %q{Ruby SDK for working with ClearElection data.  Also includes factory and rspec helpers for testing apps}
+  spec.homepage      = "https://github.com/ClearElection/clear-election-sdk-ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
