@@ -12,20 +12,33 @@ module ::Rails
   end
 end
 
+$rspec_rails_request_host = "example.com"
+
+def host!(hostname)
+  $rspec_rails_request_host = hostname
+end
+
 module ::ActionDispatch
   class Request
-    def original_url(request)
+    def initialize(path)
+      @path = path
+    end
+    def base_url
+      "http://#{$rspec_rails_request_host}"
+    end
+    def original_fullpath
+      @path
+    end
+    def original_url
+      "Expect me to be overriden"
     end
   end
 end
 
-def host!(hostname)
-end
 
 describe ClearElection::Rspec do
 
   describe "stub_election_uri" do
-
     it "stubs a valid election uri" do
       election = ClearElection::Factory.election
       uri = stub_election_uri(election: election)
@@ -36,11 +49,9 @@ describe ClearElection::Rspec do
       uri = stub_election_uri(valid: false)
       expect(ClearElection.read(uri)).to be_nil
     end
-
   end
 
   describe "stub_election_access_token" do
-
     let(:election)     { ClearElection::Factory.election }
     let(:election_uri) { stub_election_uri(election: election) }
     let(:accessToken) { SecureRandom.hex(10) }
@@ -58,11 +69,18 @@ describe ClearElection::Rspec do
       response = Faraday.post(election.signin.uri + "redeem", { election: election_uri, accessToken: accessToken })
       expect(response.status).to eq 403
     end
-
   end
 
-  describe "api election validation" do
+  describe "rails requests" do
+    it "hacks request.original_url to be based at my agent url" do
+      path = "/relative/path"
+      request = ActionDispatch::Request.new(path)
+      expect(request.original_url).to eq my_agent_uri + path
+    end
+  end
 
+
+  describe "api election validation" do
     Response = Struct.new(:status, :body) do
       def has_http_status?(status)
         self.status == status
@@ -130,9 +148,5 @@ describe ClearElection::Rspec do
         } }
       end
     end
-
   end
-
-
-
 end
