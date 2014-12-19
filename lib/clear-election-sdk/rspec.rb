@@ -102,7 +102,7 @@ module ClearElection
         end
       end
 
-      shared_examples "api that validates election URI" do |state: :open, agent: None|
+      shared_examples "api that validates election URI" do |state: nil, agent: nil|
 
         describe "verifies election URI" do
           it "rejects invalid election URI" do
@@ -123,7 +123,7 @@ module ClearElection
         it_behaves_like "api that verifies election state", state do
           let(:election) { ClearElection.read(election_uri) }
           let(:api_bound) { -> { apicall.call election_uri } }
-        end
+        end if state
 
       end
     end
