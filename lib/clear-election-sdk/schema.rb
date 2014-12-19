@@ -32,7 +32,10 @@ module ClearElection
             source = case uri.scheme
                      when nil then nil
                      when 'file' then ClearElection::Schema.root.join uri.path.sub(%r{^/}, '')
-                     else uri
+                     else
+                       # :nocov:
+                       uri
+                       # :nocov:
                      end
             if source
               item.delete '$ref'
