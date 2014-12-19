@@ -52,6 +52,10 @@ module ClearElection
     end
 
     # utilities
+    def polls_have_not_opened?
+      DateTime.now < pollsOpen
+    end
+
     def polls_are_now_open?
       DateTime.now.between?(pollsOpen, pollsClose)
     end
