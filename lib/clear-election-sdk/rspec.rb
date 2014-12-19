@@ -67,14 +67,14 @@ module ClearElection
               Timecop.travel(election.pollsOpen - oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
-                expect(response_json["error"]).to match /open/i
+                expect(JSON.parse(response.body)["error"]).to match /open/i
               end
             end
             it "rejects if polls have closed" do
               Timecop.travel(election.pollsClose + oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
-                expect(response_json["error"]).to match /open/i
+                expect(JSON.parse(response.body)["error"]).to match /open/i
               end
             end
 
@@ -83,7 +83,7 @@ module ClearElection
               Timecop.travel(election.pollsClose - oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
-                expect(response_json["error"]).to match /closed/i
+                expect(JSON.parse(response.body)["error"]).to match /closed/i
               end
             end
 
@@ -92,7 +92,7 @@ module ClearElection
               Timecop.travel(election.pollsOpen + oneDay) do
                 api_bound.call
                 expect(response).to have_http_status 403
-                expect(response_json["error"]).to match /open/i
+                expect(JSON.parse(response.body)["error"]).to match /open/i
               end
             end
 
@@ -108,13 +108,13 @@ module ClearElection
           it "rejects invalid election URI" do
             apicall.call stub_election_uri(valid: false)
             expect(response).to have_http_status 422
-            expect(response_json["error"]).to match /uri/i
+            expect(JSON.parse(response.body)["error"]).to match /uri/i
           end
 
           it "rejects if I am not #{agent} agent" do
             apicall.call stub_election_uri() # not passing my_agent_uri
             expect(response).to have_http_status 422
-            expect(response_json["error"]).to match /#{agent} agent/i
+            expect(JSON.parse(response.body)["error"]).to match /#{agent} agent/i
           end if agent
         end
 
