@@ -12,8 +12,8 @@ module ClearElection
 
     def self.from_json(data)
       errors = JSON::Validator.fully_validate(schema, data, insert_defaults: true, errors_as_objects: true)
-      return self.new(ballotId: nil, uniquifier: nil, contests: [], errors: errors) unless errors.blank?
-      
+      return self.new(ballotId: nil, uniquifier: nil, contests: [], errors: errors) unless errors.empty?
+
       self.new(
         ballotId: data["ballotId"],
         uniquifier: data["uniquifier"],
