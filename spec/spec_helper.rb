@@ -1,5 +1,10 @@
+require 'coveralls'
 require 'simplecov'
 require 'simplecov-gem-profile'
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
 SimpleCov.start "gem"
 
 require 'timecop'
