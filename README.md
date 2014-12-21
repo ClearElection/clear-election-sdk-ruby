@@ -1,4 +1,7 @@
 # ClearElection SDK (ruby)
+[![Gem Version](https://badge.fury.io/rb/clear-election-sdk.svg)](http://badge.fury.io/rb/clear-election-sdk)
+[![Build Status](https://secure.travis-ci.org/ClearElection/clear-election-sdk-ruby.svg)](http://travis-ci.org/ClearElection/clear-election-sdk-ruby)
+[![Coverage Status](https://img.shields.io/coveralls/ClearElection/clear-election-sdk-ruby.svg)](https://coveralls.io/r/ClearElection/clear-election-sdk-ruby)
 
 Ruby SDK to work with ClearElection data.
 
