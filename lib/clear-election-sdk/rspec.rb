@@ -87,7 +87,8 @@ module ClearElection
               end
             end
 
-          when :unopen
+          else
+            raise "Unknown election verification state #{state.inspect}" unless state == :unopen
             it "rejects if polls have opened" do
               Timecop.travel(election.pollsOpen + oneDay) do
                 api_bound.call
@@ -95,11 +96,6 @@ module ClearElection
                 expect(JSON.parse(response.body)["error"]).to match /open/i
               end
             end
-
-          else
-            # :nocov:
-            raise "Unknown election verification state #{state.inspect}"
-            # :nocov:
           end
         end
       end
