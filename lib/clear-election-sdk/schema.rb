@@ -29,15 +29,9 @@ module ClearElection
         JSON.recurse_proc json do |item|
           if Hash === item and uri = item['$ref']
             uri = URI.parse(uri)
-            source = case uri.scheme
-                     when nil then nil
-                     when 'file' then ClearElection::Schema.root.join uri.path.sub(%r{^/}, '')
-                     else
-                       # :nocov:
-                       uri
-                       # :nocov:
-                     end
-            if source
+            if uri.scheme
+              source = uri
+              source = ClearElection::Schema.root.join uri.path.sub(%r{^/}, '') if uri.scheme == 'file'
               item.delete '$ref'
               item.merge! expand_refs! JSON.parse source.read
             end
