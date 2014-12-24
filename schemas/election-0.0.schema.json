@@ -4,7 +4,7 @@
   "description": "ClearElection Election definition, v0.0",
   "type": "object",
   "properties": {
-    "version": { "enum": ["0.0"] },
+    "clearelection": { "enum": ["0.0"] },
     "name": { "type": "string" },
     "agents": {
       "type": "object",
@@ -46,7 +46,7 @@
       }
     }
   },
-  "required": ["version", "name", "agents", "schedule", "contests"],
+  "required": ["clearelection", "name", "schedule", "contests"],
   "definitions": {
     "agent": {
       "type": "object",

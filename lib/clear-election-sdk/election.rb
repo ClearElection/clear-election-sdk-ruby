@@ -35,7 +35,7 @@ module ClearElection
 
     def as_json()
       data = {
-        "version" => "0.0",
+        "clearelection" => "0.0",
         "name" => @name,
         "agents" => {
           "signin" => @signin.as_json,
