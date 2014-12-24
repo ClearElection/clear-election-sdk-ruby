@@ -46,4 +46,23 @@ describe ClearElection::Election do
       end
     end
   end
+
+  describe "json" do
+
+    it "makes round trip without returns" do
+      roundtrip ClearElection::Factory.election(returns: false)
+    end
+
+    it "makes round trip with returns" do
+      roundtrip ClearElection::Factory.election(returns: true)
+    end
+
+    def roundtrip(election)
+      original_json = JSON.generate election.as_json
+      final_json = JSON.generate ClearElection::Election.from_json(JSON.parse original_json).as_json
+      expect(final_json).to eq original_json
+    end
+
+  end
+
 end
