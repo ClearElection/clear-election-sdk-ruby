@@ -4,13 +4,13 @@ module ClearElection
 
     SCHEMA_VERSION = 0.0
 
-    attr_reader :signin, :booth, :pollsOpen, :pollsClose, :contests, :uri
+    attr_reader :signin, :booth, :pollsOpen, :pollsClose, :contests, :uri, :voters, :ballots
 
     def self.schema
       ClearElection::Schema.election(version: SCHEMA_VERSION)
     end
 
-    def initialize(name:, signin:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil)
+    def initialize(name:, signin:, booth:, contests:, pollsOpen:, pollsClose:, uri:nil, voters:nil, ballots:nil)
       @name = name
       @signin = signin
       @booth = booth
@@ -18,6 +18,8 @@ module ClearElection
       @pollsOpen = pollsOpen
       @pollsClose = pollsClose
       @uri = uri
+      @voters = voters || []
+      @ballots = ballots || []
     end
 
     def self.from_json(data, uri: nil)
@@ -29,7 +31,9 @@ module ClearElection
         contests: data["contests"].map {|data| Contest.from_json(data) },
         pollsOpen: DateTime.rfc3339(data["schedule"]["pollsOpen"]),
         pollsClose: DateTime.rfc3339(data["schedule"]["pollsClose"]),
-        uri: uri
+        uri: uri,
+        voters: data["returns"]["voters"],
+        ballots: data["returns"]["ballots"].map { |data| Ballot.from_json(data) }
       )
     end
 
@@ -47,8 +51,17 @@ module ClearElection
         },
         "contests" => @contests.map(&:as_json)
       }
+      data["returns"] = {
+        "voters" => @voters,
+        "ballots" => @ballots.map(&:as_json)
+      }
       JSON::Validator.validate!(Election.schema, data)
       data
+    end
+
+    def set_returns(voters:, ballots:)
+      @voters = voters
+      @ballots = ballots
     end
 
     # utilities

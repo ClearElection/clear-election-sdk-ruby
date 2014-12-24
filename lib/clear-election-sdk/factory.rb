@@ -18,7 +18,8 @@ module ClearElection
       booth: nil,
       pollsOpen: nil,
       pollsClose: nil,
-      writeIn: true
+      writeIn: true,
+      returns: false
     )
       one_month = 60*60*24*30
       Election.new(
@@ -31,7 +32,14 @@ module ClearElection
           Factory.contest(ranked: true, multiplicity: 3, writeIn: writeIn, ncandidates: 3),
           Factory.contest(ncandidates: 2)
         ]
-      )
+      ).tap { |election|
+        if returns
+          election.set_returns(
+            voters: 10.times.map{ { "name" => seq("Voter") } }.sort_by { |v| v[:name] },
+            ballots: 10.times.map{ Factory.ballot(election) }.sort
+          )
+        end
+      }
     end
 
     def self.contest(ranked: nil, multiplicity: nil, writeIn: nil, ncandidates: 3)

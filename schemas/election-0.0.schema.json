@@ -44,6 +44,18 @@
         },
         "required": ["contestId", "name", "candidates"]
       }
+    },
+    "results": {
+        "type": "object",
+        "properties": {
+            "ballots": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/ballot" }
+            },
+            "voters": {
+                "type": "object"
+            }
+        }
     }
   },
   "required": ["clearelection", "name", "schedule", "contests"],
@@ -54,7 +66,8 @@
         "uri": { "type": "string", "format": "uri" }
       },
       "required": ["uri"]
-    }
+    },
+    "ballot": { "$ref": "file:schemas/ballot-0.0.schema.json" }
   }
 }
 
