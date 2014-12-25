@@ -1,3 +1,4 @@
+require_relative '../clear-election-sdk'
 module ClearElection
   module Factory
     def self.seq(key)
