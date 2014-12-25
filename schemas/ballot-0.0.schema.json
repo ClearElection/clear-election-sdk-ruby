@@ -4,7 +4,7 @@
   "description": "ClearElection Ballot definition, v0.0",
   "type": "object",
   "properties": {
-    "version": { "enum": ["0.0"] },
+    "clearelection-ballot": { "enum": ["v0.0"] },
     "ballotId": { "type": "string" },
     "uniquifier": { "type": "string" },
     "contests": {
@@ -29,5 +29,5 @@
     },
     "demographic": { "type": "object" }
   },
-  "required": ["version", "ballotId", "uniquifier", "contests"]
+  "required": ["clearelection-ballot", "ballotId", "uniquifier", "contests"]
 }

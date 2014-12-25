@@ -21,7 +21,7 @@ module ClearElection
     end
 
     def api(agent, version:)
-      _get(group: "api", item: agent, version:version, expand: true)
+      _get(group: "api", item: agent, version: version, expand: true)
     end
 
     def expand_refs!(json)

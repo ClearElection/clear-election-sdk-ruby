@@ -45,7 +45,7 @@ module ClearElection
 
     def as_json()
       data = {
-        "version" => "0.0",
+        "clearelection-ballot" => "v0.0",
         "ballotId" => @ballotId,
         "uniquifier" => @uniquifier,
         "contests" => @contests.map(&:as_json),
