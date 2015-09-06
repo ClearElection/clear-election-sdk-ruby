@@ -48,6 +48,13 @@ Or install it yourself as:
 
     $ gem install clear_election
 
+## History
+
+* 0.1.2 Bug fix: schema expansion
+* 0.1.1 Dependency fix
+* 0.1.0 Results, json roundtrip
+* 0.0.1 Initial release
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/clear_election/fork )
