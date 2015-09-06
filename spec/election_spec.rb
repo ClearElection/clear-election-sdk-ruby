@@ -57,11 +57,21 @@ describe ClearElection::Election do
       roundtrip ClearElection::Factory.election(returns: true)
     end
 
+    it "works in arbitrary directory" do
+      election = ClearElection::Factory.election
+      Dir.chdir Dir.mktmpdir do |dir|
+        expect{ election.as_json }.to_not raise_error
+      end
+    end
+
+    private
+
     def roundtrip(election)
       original_json = JSON.generate election.as_json
       final_json = JSON.generate ClearElection::Election.from_json(JSON.parse original_json).as_json
       expect(final_json).to eq original_json
     end
+
 
   end
 
