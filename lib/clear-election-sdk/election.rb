@@ -23,7 +23,7 @@ module ClearElection
     end
 
     def self.from_json(data, uri: nil)
-      JSON::Validator.validate!(schema, data, insert_defaults: true)
+      ClearElection::Schema.validate!(schema, data, insert_defaults: true)
       self.new(
         name: data["name"],
         signin: Agent.from_json(data["agents"]["signin"]),
@@ -55,7 +55,7 @@ module ClearElection
         "voters" => @voters,
         "ballots" => @ballots.map(&:as_json)
       }
-      JSON::Validator.validate!(Election.schema, data)
+      ClearElection::Schema.validate!(Election.schema, data)
       data
     end
 
@@ -86,7 +86,7 @@ module ClearElection
       attr_reader :uri
 
       def initialize(uri:)
-        @uri = URI(uri)
+        @uri = Addressable::URI.parse(uri)
       end
 
       def self.from_json(data)

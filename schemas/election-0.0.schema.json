@@ -67,7 +67,7 @@
       },
       "required": ["uri"]
     },
-    "ballot": { "$ref": "file:schemas/ballot-0.0.schema.json" }
+    "ballot": { "$ref": "file:ballot-0.0.schema.json" }
   }
 }
 
